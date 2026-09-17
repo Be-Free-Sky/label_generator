@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4096" height="1024" viewBox="0 0 512 128"><rect width="128" height="128" rx="30" fill="#001b48"/>
+<path d="M31 27h46l23 23v43a8 8 0 0 1-8 8H36a8 8 0 0 1-8-8V35a8 8 0 0 1 3-8Z" fill="#d6e8ee"/>
+<path d="M77 27v16a7 7 0 0 0 7 7h16Z" fill="#018abe"/>
+<path d="M43 51h22v8H43zm0 12h8v8h-8zm0 12h32v8H43zm24-12h8v8h-8z" fill="#02457a"/>
+<path d="M83 61h4v27h-4zm-8 26h4v5h-4z" fill="#018abe"/><g fill="#001b48" font-family="Segoe UI,Arial,sans-serif"><text x="154" y="64" font-size="36" font-weight="700" letter-spacing="3">SKYWORTH</text><text x="157" y="91" font-size="14" letter-spacing="4" fill="#02457a">LABEL SUITE</text></g></svg>

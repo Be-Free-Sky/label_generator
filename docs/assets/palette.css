@@ -1,0 +1,523 @@
+/* Color and text refresh only. Original page layouts and spacing are retained. */
+:root{
+ --ink:#001b48;--ink-2:#02457a;--muted:#24516e;--muted-2:#24516e;
+ --brand:#02457a;--brand-600:#018abe;--brand-900:#001b48;--brand-050:#eaf6fa;
+ --accent:#018abe;--accent-050:#e7f7fc;--page:#f2f8fa;--line:#d6e8ee;--line-2:#97cadb;
+ --g-ink:#001b48;--g-ink2:#02457a;--g-mut:#24516e;--g-mut2:#24516e;
+ --g-brand:#018abe;--g-brand-d:#02457a;--g-brand-l:#eaf6fa;--g-brand-b:#97cadb;
+ --g-accent:#018abe;--g-accent-l:#e7f7fc;--g-page:#f2f8fa;--g-line:#d6e8ee;--g-line2:#97cadb;
+ --t1:#001b48;--t2:#02457a;--t3:#02457a;--t4:#24516e;
+ --c-brand:#02457a;--c-brand-d:#02457a;--c-brand-l:#eaf6fa;--c-brand-b:#97cadb;--c-accent:#018abe;
+}
+/* THE GROUND. Two very wide, very faint colour FIELDS rather than pale flat
+   tints -- the same recipe the Validator uses, so the two products sit on the
+   same ground. The vibrancy comes from using the ramp's own cyan at low alpha
+   (#018ABE at 12%) instead of a washed-out sample of it: the surface stays
+   within a hair of the page colour, so every contrast ratio measured above
+   still holds, while the page stops looking grey.
+   Fixed, so the wash belongs to the WINDOW and does not slide with the
+   content — scrolling through a moving gradient reads as a rendering fault. */
+body{color:#001b48;background:#f4f8fb!important;
+  background-image:
+    radial-gradient(1100px 620px at 8% -10%,rgba(1,138,190,.16),transparent 62%),
+    radial-gradient(900px 540px at 96% 2%,rgba(0,27,72,.12),transparent 64%),
+    /* A third field across the MIDDLE of the hero band. Sampled against the
+       Validator, the two corner washes left the centre-top at rgb(244,248,251)
+       against its rgb(232,239,245) -- so the corners read blue and the part the
+       heading actually sits on did not. */
+    radial-gradient(1300px 520px at 50% -6%,rgba(1,138,190,.11),transparent 70%)!important;
+  background-attachment:fixed!important}
+/* ------------------------------- THE HERO -------------------------------
+   Gradient INK on a light ground, not white on a dark band — the treatment the
+   sibling Validator uses, so the two products read as one family.
+
+   TWO RAMPS, READ IN OPPOSITE DIRECTIONS, and swapping them silently breaks
+   contrast. A ramp painting a SURFACE under white text needs every stop dark
+   enough for white; a ramp painting TEXT on a light surface is measured the
+   other way round. Measured against white:
+
+       surface ramp   #001B48 16.80   #02457A 9.84   #0176A2 5.10
+       ink ramp       #001B48 16.80   #02457A 9.84   #016286 6.79
+
+   The end stop is the supplied cyan DARKENED until it clears the floor:
+   #018ABE itself measures 3.90 on white and would fail as text, which is
+   exactly why it is the decorative accent here and never a gradient stop. */
+/* The hero sits ON that ground rather than painting its own, so the wash runs
+   unbroken from the top of the page through the panel behind it. A second
+   gradient here only ever fought the first. */
+.hero{background:transparent!important}
+/* The faint grid was drawn in white for a dark band; on a light one it has to
+   invert or it is simply invisible. */
+.hero:after{background-image:
+  linear-gradient(rgba(2,69,122,.055) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(2,69,122,.055) 1px,transparent 1px)!important}
+
+/* The solid colour is declared FIRST and the gradient only inside the guard.
+   Without that, a browser without background-clip renders transparent text on
+   no background — an invisible H1, which is the whole page gone. */
+.hero h1{color:#001b48}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero h1,h1 .grad{background:linear-gradient(115deg,#001b48 0%,#02457a 50%,#016286 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+}
+.eyebrow{color:#02457a;border-color:#97cadb;background:#ffffffa8}
+.eyebrow i{background:#018abe;box-shadow:0 0 0 4px #018abe2e}
+.stat{background:#fff;border-color:#d6e8ee;box-shadow:0 1px 2px #001b480d,0 8px 24px #001b4808}
+.stat b{color:#001b48}
+.stat span{color:#24516e}
+/* The panel used to LIFT OFF a dark band, which is why it had a negative top
+   margin. With the hero on the same light ground there is no band to lift off,
+   and the overlap only made it look as though the panel had slipped. */
+.panel{margin-top:0}
+.hero-in{padding:44px 0 34px!important}
+.stats{margin-top:30px!important}
+
+
+.brand b,.card h3,.empty h3{color:#001b48}.brand span,.step h2{color:#02457a}.brand b,.card h3{font-weight:750}
+.card .dim,.chip,.empty p,.empty li{color:#24516e}.chip.on,.chip.ac,.go{color:#02457a}.chip.on,.chip.ac{background:#e7f7fc;border-color:#97cadb}
+.go{font-weight:750}.card .ic{color:#018abe;background:linear-gradient(140deg,#d6e8ee,#fff);border-color:#97cadb}
+.seg button[aria-selected="true"]{background:linear-gradient(135deg,#018abe,#02457a);color:#fff}.seg button[aria-selected="true"] small{color:#fff}
+.seg button small{color:#24516e}.pill{color:#02457a;background:#eaf6fa;border-color:#97cadb}
+.empty{background:linear-gradient(150deg,#f8fcfd,#d6e8ee)}
+footer{background:linear-gradient(150deg,#02457a,#001b48);color:#d6e8ee}.f-note{color:#d6e8ee}.f-brand b,.f-copy b{color:white}
+.brand .mk,.f-brand .mk{background:transparent;border-color:transparent;box-shadow:none}.mk img{display:block;width:100%;height:100%}
+body:not(.portal) header{background:linear-gradient(125deg,#001b48 0%,#02457a 65%,#018abe 125%);color:white}
+/* The page header is a brand LOCKUP: the corporate mark, a hairline, then the
+   page's own title. .h-title used to carry a generic document glyph as a
+   background-image with a 41px left pad; the mark replaces it, and the pad goes
+   with it or the title sits in a gutter that no longer has anything in it. */
+.h-lock{display:flex;align-items:center;gap:14px}
+.h-mark{height:18px;width:auto;flex:none;color:#fff;display:block;opacity:.96}
+.h-rule{width:1px;height:30px;flex:none;background:rgba(255,255,255,.30)}
+.h-title{color:#fff!important;text-shadow:0 1px 8px #001b4820}
+/* ------------------------- Label switcher ------------------------------
+   Five sibling labels, in the header, so moving between them never goes back
+   through the portal and never re-picks the build. The CURRENT one is a span,
+   not a link -- inert and visibly so. "All builds" is set apart by a left rule
+   because it leaves this build rather than moving inside it. */
+.h-nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-left:auto}
+.h-tab{font-family:'JioTypeMedium';font-size:12.5px;line-height:1;color:#d6e8ee;
+  text-decoration:none;padding:8px 13px;border-radius:8px;white-space:nowrap;
+  border:1px solid transparent;transition:background .15s,color .15s,border-color .15s}
+a.h-tab:hover{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.28)}
+a.h-tab:focus-visible{outline:2px solid #97cadb;outline-offset:2px}
+/* Selected is a FILL plus a border, not a colour change alone: on a header this
+   dark, a lighter grey against a slightly-lighter grey is not a difference
+   anyone can see at 12.5px. */
+.h-tab.on{background:#fff;color:#001b48;border-color:#fff;font-weight:700;cursor:default}
+.h-tab.h-all{margin-left:10px;padding-left:16px;border-left:1px solid rgba(255,255,255,.28);
+  border-radius:0 8px 8px 0;color:#97cadb}
+a.h-tab.h-all:hover{color:#fff}
+@media (max-width:900px){
+  /* The switcher wraps to its own full-width row rather than squeezing the
+     title, which is the one thing that says which label you are editing. */
+  header{align-items:flex-start}
+  .h-nav{margin-left:0;width:100%;margin-top:10px}
+}
+@media (max-width:560px){
+  .h-tab{padding:7px 10px;font-size:12px}
+  .h-tab.h-all{margin-left:6px;padding-left:10px}
+}
+
+@media (max-width:560px){
+  /* Below this the mark and the label name compete for one line. The TITLE is
+     what the operator needs -- it says which label they are about to print --
+     so the corporate mark is what gives way. */
+  .h-mark,.h-rule{display:none}
+}
+.h-sub{color:#d6e8ee!important}.h-back,.h-badge{color:white!important;border-color:#97cadb80}.h-back:hover{background:#018abe55}
+.s-title{color:#02457a!important;font-weight:700}label{color:#001b48!important;font-weight:600}label .hint,.hint{color:#24516e!important}
+input:not(.bad),textarea:not(.bad){color:#001b48!important}input:focus,textarea:focus{outline-color:#018abe;border-color:#018abe!important}
+.opt.sel{background:linear-gradient(135deg,#018abe,#02457a)!important;border-color:#018abe!important;color:white!important}
+.opt:focus-visible,.seg button:focus-visible,.card:focus-visible{outline-color:#018abe}
+.rsn-info{color:#02457a!important;background:linear-gradient(180deg,#f3fbfe,#e3f3f9)!important;border-color:#97cadb!important}
+.rsn-info b,.rsn-info strong{color:#02457a!important}.rsn-info:after{background:linear-gradient(#018abe,#02457a)}.rsn-info:before{background:linear-gradient(140deg,#018abe,#02457a)}
+#saveBtn:not(:disabled),.dl .pri{background:linear-gradient(135deg,#018abe,#02457a)!important;color:white!important}.dl .sec{color:#02457a!important;border-color:#018abe}.dl button{border-color:#018abe}
+.preview-wrap{background:#eaf3f7!important}.check{color:#02457a!important}.note,.codeprev figcaption{color:#24516e!important}#qrXml{color:#02457a!important;background:#f2f9fc}
+.lx{border-color:#97cadb!important;background:#f2f9fc!important}.lx-h,.lx-btns button,.lx-k{color:#02457a!important}.lx-btns button:hover:not(:disabled){border-color:#018abe!important;color:#02457a!important}
+/* Retain the original red/amber/green validation semantics. */
+
+/* ------------------------- BIGGER, ROUNDER, SLEEKER ---------------------- */
+
+/* THE CAP IS WHAT GOVERNS WRAP SAFETY, not the vw term, and it is MEASURED
+   rather than chosen: this title renders 12.29x its own font size, the wrap is
+   1180px, so 0.98 x 1180 / 12.29 = 94px is the largest it can be before it
+   wraps on a wide screen. The vw term has to satisfy the same rule at every
+   width BELOW the cap, where the wrap is (viewport - 48) instead of 1180 --
+   which is what makes it 7.3 and not the 8.2 that looked right and overflowed.
+   Re-measure both on a rename: the ratio belongs to the WORDS. */
+/* Matched to the Validator by MEASURING both at the same viewport: it sets
+   104px at weight 760 with -0.038em tracking, this was 94px at 850 with -2.8px.
+   The lighter weight and tighter tracking are what let it be BIGGER while
+   taking a similar share of the line -- a heavier face at the same size simply
+   runs out of room. Tracking is in em so it scales with the clamp instead of
+   staying a fixed 3.95px at every size. The cap is re-measured below. */
+h1{font-weight:760!important;letter-spacing:-.038em!important;
+   line-height:1.0!important;text-wrap:balance;
+   /* Re-measured after the weight and tracking changed: the ratio fell from
+      12.29 to 11.34, so 0.98 x 1220 / 11.34 = 105.4px is now the ceiling and
+      the Validator's own 104px fits inside it. The vw term satisfies the same
+      rule below the cap, where the wrap is (viewport - 48). */
+   font-size:clamp(44px,7.9vw,104px)!important}
+
+/* ---------------------- THE PLANT / VENDOR PICKERS ----------------------
+   Matched to the Validator: a fully round container in a pale blue, the
+   selected item a NAVY-LED gradient pill with a soft glow, everything else
+   plain ink on the container. The old selected pill was CYAN-led
+   (#018ABE -> #02457A), which is the accent doing a job the brand should do --
+   it read as a highlight rather than as the chosen thing. */
+.seg{background:#e8f1f7!important;border:1px solid #dbeaf2!important;
+     border-radius:999px!important;padding:5px!important;gap:2px!important}
+.seg button{border-radius:999px!important;padding:11px 24px!important;
+     color:#02457a!important;font-weight:700!important}
+.seg button small{color:#24516e!important;font-weight:600!important}
+.seg button:hover{background:#ffffff9e!important;color:#001b48!important}
+.seg button[aria-selected="true"]{
+     background:linear-gradient(120deg,#001b48 0%,#02457a 52%,#0176a2 100%)!important;
+     color:#fff!important;
+     box-shadow:0 1px 2px rgba(0,27,72,.18),0 8px 20px -6px rgba(1,138,190,.45)!important}
+.seg button[aria-selected="true"] small{color:#d6e8ee!important}
+
+/* The step number and its label on ONE line with the control, the way the
+   Validator sets PLANT and VENDOR: the label is a quiet fixed-width column and
+   the control is what the eye lands on. Reverts to stacked when there is no
+   room for a column. */
+@media (min-width:720px){
+  .panel .step{margin-bottom:0}
+  .panel .step + .seg{margin-left:0}
+}
+
+/* Rounder, and consistently so: a 20px panel around 14px cards around 10px
+   chips reads as three different design languages stacked. */
+:root{--r-l:26px!important;--r-m:18px!important;--r-s:12px!important}
+.panel{border-radius:26px;border-color:#e3eef3;
+  box-shadow:0 1px 2px rgba(0,27,72,.04),0 18px 50px -12px rgba(0,27,72,.13)}
+.card{border-radius:18px;border-color:#e3eef3}
+.card:hover{border-color:#97cadb;box-shadow:0 10px 30px -8px rgba(0,27,72,.16)}
+.card .ic{border-radius:14px}
+.stat{border-radius:18px}
+.seg{border-radius:999px;background:#ffffffbf;border-color:#dbebf1}
+.seg button{border-radius:999px}
+.chip{border-radius:999px}
+.eyebrow{border-radius:999px}
+
+/* The sticky bar was near-opaque WHITE, which cut a hard pale band across the
+   top of the blue wash — the heading then sat on a lighter ground than the page
+   around it, which is the opposite of the intent. Tinted and more transparent,
+   so the wash runs unbroken from the very top and the bar reads as glass over
+   it rather than a separate white strip. */
+.top{background:rgba(240,247,250,.62)!important;border-bottom-color:#dcebf1!important;
+     -webkit-backdrop-filter:blur(16px) saturate(1.25);backdrop-filter:blur(16px) saturate(1.25)}
+
+/* ---------------------------- MOTION, CALMED ----------------------------
+   Reported as "a lot of bouncing after selecting or hover". Three things were
+   compounding, and the first is the one that made it feel like bouncing:
+
+     paint() rebuilds the card grid, so the ENTRANCE ANIMATION replayed on
+     every selection rather than once on load -- five cards sliding 12px with
+     a 55ms stagger, every time a plant or vendor was clicked.
+
+     cubic-bezier(.2,.7,.3,1) is a fast-out curve; it reads as a spring.
+
+     hover lifted a card 4px and slid its arrow 4px.
+
+   Motion now carries the same MEANING with a fraction of the movement: enough
+   to say "this changed" and not enough to watch. Distances roughly a third,
+   durations shorter, and plain ease-out curves with no overshoot. */
+@keyframes rise{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.card{animation:rise .2s ease-out both;
+      transition:transform .16s ease-out,box-shadow .16s ease-out,border-color .16s ease-out}
+.card:hover{transform:translateY(-1.5px)}
+.card:hover .go svg{transform:translateX(2px)}
+.go svg{transition:transform .16s ease-out}
+.empty{animation:rise .2s ease-out both}
+.seg button{transition:background .14s ease-out,color .14s ease-out,box-shadow .14s ease-out}
+
+/* The eyebrow dot pulsed between full and 35% opacity every 2.4s -- a light
+   blinking in the corner of the eye for as long as the page is open. Kept, so
+   it still reads as "live", but shallow enough to stop demanding attention. */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.72}}
+.eyebrow i{animation-duration:3.4s!important}
+
+/* The illustration's floating and morphing belong to an empty state nobody
+   should be looking at for long. Halved, and slowed. */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes morph{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.018) rotate(-1deg)}}
+
+/* And none of it at all where the viewer has asked for less. The base sheet
+   has a reduced-motion block; this makes sure the rules ADDED here are in it
+   too, rather than quietly reintroducing movement it had switched off. */
+@media (prefers-reduced-motion:reduce){
+  .card,.empty{animation:none!important}
+  .card:hover{transform:none!important}
+  .card:hover .go svg{transform:none!important}
+  .eyebrow i{animation:none!important}
+}
+
+/* --------------------- MOTION ON THE GENERATOR PAGES ---------------------
+   Same complaint, different rules. These lifted 3px AND scaled to 1.045 at the
+   same time; a lift plus a grow reads as a pop rather than a response, and the
+   two together are most of the "bouncing". A lift alone says the same thing.
+
+   The scale is dropped rather than reduced: at the sizes these controls are,
+   1.01 is invisible, so it would only cost a repaint. */
+.opt:hover,.opt:focus-visible,#saveBtn:not(:disabled):hover,.dl button:hover,
+.ghost:hover,.opt.sel:hover{transform:translateY(-1.5px)!important}
+.opt:active,#saveBtn:not(:disabled):active,.dl button:active,
+.ghost:active{transform:translateY(0)!important}
+.opt,.ghost,.dl button,#saveBtn{transition:transform .16s ease-out,
+  box-shadow .16s ease-out,background-color .16s ease-out,
+  border-color .16s ease-out,color .16s ease-out!important}
+
+/* The invalid-field shake ran -5px, +4px, -2px, +1px on a fast-out curve. A
+   nudge should say "look here", not knock the panel about; halved, so it still
+   catches the eye and no longer reads as an error the page is upset by. */
+@keyframes badNudge{0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-2px)}60%{transform:translateX(1.5px)}85%{transform:translateX(-1px)}}
+
+@media (prefers-reduced-motion:reduce){
+  .opt:hover,.opt:focus-visible,#saveBtn:not(:disabled):hover,.dl button:hover,
+  .ghost:hover,.opt.sel:hover{transform:none!important}
+}
+
+/* ------------------------- SPACING, COMPACTED --------------------------
+   Measured against the Validator: its heading starts 113px down the page,
+   this one started at 168, and each stacked step spent 105px carrying a 23px
+   label and a 56px control. The waste was not in any one value -- it was the
+   RHYTHM: a label above its control, dividers with 26px of air either side,
+   a stats block between the heading and the first thing you can click.
+
+   Nothing here removes information. It stops the page spending a screen and a
+   half saying what fits in one. */
+
+/* The label is a quiet fixed-width column; the control is what the eye lands
+   on. Below 720px there is no room for a column, so it stacks again. */
+.prow{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.prow .step{margin-bottom:0;min-width:152px;flex:0 0 auto}
+@media (max-width:720px){
+  .prow{display:block}
+  .prow .step{margin-bottom:10px}
+}
+
+/* 26px either side of a hairline is 52px to say "next". 14 is enough. */
+.divider{margin:16px 0!important}
+
+/* The hero: the eyebrow's 22px bottom margin plus 44px of padding put the
+   heading 168px down. */
+.hero-in{padding:26px 0 22px!important}
+.eyebrow{margin-bottom:14px!important;padding:6px 13px!important}
+.stats{margin-top:22px!important;gap:10px!important}
+.stat{padding:10px 16px!important;min-width:104px!important}
+.stat b{font-size:19px!important}
+
+.panel{padding:20px 22px 22px!important}
+.card{padding:18px!important}
+.card .ic{width:38px!important;height:38px!important;margin-bottom:11px!important}
+.card .ic svg{width:19px!important;height:19px!important}
+.card h3{font-size:16px!important}
+.chips{margin:11px 0 13px!important}
+.go{padding-top:11px!important}
+.grid{gap:14px!important}
+/* body.portal, NOT a bare `main`.
+   This was written for the portal, where .wrap supplies the horizontal gutter
+   so main needs none. Unscoped it also hit the GENERATOR pages, whose main
+   carries its own `padding:26px 28px 56px` -- stripping it put every section
+   flush against the viewport edge with no gutter at all. Second time an
+   unscoped selector in this shared sheet has crossed between the two page
+   types; the portal's body carries .portal precisely so it need not. */
+body.portal main{padding:0 0 40px!important}
+
+/* FIVE LABELS, ONE ROW -- the way the Validator sets them.
+   auto-fit with a 280px floor landed on FOUR columns once the wrap went to
+   1220, leaving the fifth card alone on a second row: a lone card reads as
+   "and also this" rather than as the last of a set of equals. Explicit
+   breakpoints choose the split deliberately instead of letting the track
+   width decide it:
+       5 across   >= 1080px
+       3 + 2      >= 760px   (never 4 + 1)
+       2 + 2 + 1  >= 520px
+       one column below that
+   The floor has to go, or auto-fit's minimum silently overrides all of it. */
+.grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+@media (max-width:1080px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media (max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media (max-width:520px){.grid{grid-template-columns:1fr!important}}
+
+/* At a fifth of the row the card has to carry its name and its size without
+   the chips wrapping into a stack. The chips shrink; nothing is removed. */
+.card{padding:15px!important}
+.card h3{font-size:14.5px!important;letter-spacing:-.2px!important;line-height:1.3}
+.card .dim{font-size:11.5px!important}
+.chip{font-size:10.5px!important;padding:3.5px 8px!important;gap:4px!important}
+.chips{gap:4px!important;margin:9px 0 11px!important}
+.go{font-size:12.5px!important;padding-top:9px!important}
+.card .ic{width:34px!important;height:34px!important;margin-bottom:9px!important;
+  border-radius:11px!important}
+.card .ic svg{width:17px!important;height:17px!important}
+
+/* ------------------ THE GENERATOR FORMS, SIZED TO CONTENT ----------------
+   Every single-line value was in a rows="2" textarea -- Model, Rated voltage,
+   Colour, Carton no., PO date, Quantity -- so each spent a full extra line of
+   box on nothing, down a column of fifteen fields. The page ran 2218px.
+
+   Sized by the ROWS ATTRIBUTE rather than by a list of field ids, so it holds
+   for a field nobody has added yet, and so the one value that genuinely wraps
+   keeps its room: commodity is rows="3" and really is two lines of artwork.
+   Nothing is made un-editable and nothing scrolls -- these boxes still grow if
+   the operator types more. */
+/* 40px looked right and CLIPPED: the border box leaves 38px of content where
+   one line needs 41, so every value sat 3px short across ten pages. Measured
+   with scrollHeight against clientHeight per field rather than by eye -- a 3px
+   clip is invisible until someone reads a serial off the screen.
+   The FALLBACK, for a browser without field-sizing. */
+.fields textarea[rows="2"]{height:44px;min-height:44px}
+.fields textarea[rows="3"]{height:64px;min-height:64px}
+
+/* SIZED BY CONTENT, not by the rows attribute.
+   The rows-based rule was still wrong for the MRP: `reg` is rows="2" and holds
+   a three-line registered office, `marketed` needs 104px. `rows` records what
+   the author guessed, not what the field holds -- and the operator can type
+   more at any moment, so no fixed height is correct for long.
+   field-sizing lets the box be exactly its content: single-line values stop
+   wasting a line AND long addresses stop being clipped, from one rule. */
+@supports (field-sizing:content){
+  .fields textarea{field-sizing:content;height:auto!important;
+    min-height:44px!important;max-height:none}
+}
+.fields textarea{resize:vertical}
+
+/* The rhythm around them, on the same principle as the portal. */
+.col-l section,.col-r section{padding:16px 18px 18px!important}
+.fields{gap:11px!important}
+.fields label{margin-bottom:4px!important}
+.s-title{margin-bottom:12px!important}
+
+/* ------------------ THE PAGE HEADER: STICKY AND CLEAR --------------------
+   Asked for three times as "transparent", and each time it was made more
+   translucent while staying DARK. The value was never the problem -- the WHITE
+   TEXT was. Measured, white on a darkening bar over this light page:
+
+       alpha 0.78  sub-line 7.22:1      0.58  4.62:1   <- the floor for white
+       alpha 0.48  3.53 FAILS           0.28  2.20 FAILS
+
+   So white simply cannot survive a bar you can see through: past 0.58 the 13px
+   sub-line drops under AA. The same measurement read the other way says what
+   does work -- DARK ink gains as the bar thins, 4.76 at 0.48 and 7.63 at 0.28.
+
+   Light glass with dark ink, then. It is the only combination that is actually
+   transparent AND legible, and it is what the portal's own bar already does at
+   rgba(240,247,250,.62) -- so the two now match instead of being a dark bar and
+   a light one in the same product. */
+header:not(.hero){position:sticky!important;top:0!important;z-index:60!important;
+  background:rgba(238,246,250,.60)!important;
+  border-bottom:1px solid rgba(1,138,190,.20)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);
+  backdrop-filter:blur(18px) saturate(1.4);
+  box-shadow:0 2px 14px rgba(0,27,72,.07)!important}
+
+/* Everything on the bar takes the brand ink instead of white. */
+header:not(.hero) .h-title{color:#001b48!important;text-shadow:none!important}
+header:not(.hero) .h-sub{color:#24516e!important}
+header:not(.hero) .h-mark{color:#001b48!important;opacity:1}
+header:not(.hero) .h-rule{background:#97cadb!important}
+header:not(.hero) .h-tab{color:#02457a!important}
+header:not(.hero) a.h-tab:hover{background:#ffffffcc!important;color:#001b48!important;
+  border-color:#bfdde9!important}
+/* The selected tab was a WHITE pill, which is invisible on a light bar. It
+   takes the brand gradient now -- the same navy-led ramp the portal's chosen
+   plant and vendor use, so "chosen" looks the same everywhere. */
+header:not(.hero) .h-tab.on{
+  background:linear-gradient(120deg,#001b48 0%,#02457a 52%,#0176a2 100%)!important;
+  color:#fff!important;border-color:transparent!important;
+  box-shadow:0 1px 2px rgba(0,27,72,.18),0 6px 16px -5px rgba(1,138,190,.45)!important}
+header:not(.hero) .h-tab.h-all{color:#24516e!important;
+  border-left-color:#97cadb!important}
+header:not(.hero) a.h-tab.h-all:hover{color:#001b48!important}
+header:not(.hero) .h-back{color:#02457a!important}
+
+@media (min-width:1100px){
+  .col-r{top:98px!important;max-height:calc(100vh - 114px)!important}
+}
+
+/* ------------------- THE CARD HOVER, AND THE BLUE RAIL -------------------
+   Taken from the Validator's own label cards rather than approximated:
+
+       hover      border-color #97CADB, lift, deeper shadow
+       chosen     border #018ABE, wash rgba(1,138,190,.13),
+                  inset 0 0 0 2px #018ABE plus a 3px ring
+       its icon   the brand gradient, with the cyan glow
+
+   The Generator's cards are LINKS, not a choice -- clicking one navigates, so
+   there is no chosen state to show. The treatment therefore lands on HOVER,
+   which is the only state they have, and it is the full one: the blue edge and
+   the wash together, so the card under the pointer is unmistakable. */
+.card:hover{
+  border-color:#018abe!important;
+  background:linear-gradient(0deg,rgba(1,138,190,.13),rgba(1,138,190,.13)),#fff!important;
+  box-shadow:inset 0 0 0 2px #018abe,0 0 0 3px rgba(1,138,190,.18),
+             0 14px 34px -12px rgba(0,27,72,.20)!important}
+/* The icon tile takes the brand gradient and the glow, the way the Validator's
+   chosen card does -- it is what makes the card read as lit rather than merely
+   outlined. */
+.card:hover .ic{background:linear-gradient(120deg,#001b48 0%,#02457a 50%,#0176a2 100%)!important;
+  border-color:transparent!important;color:#fff!important;
+  box-shadow:0 8px 24px -6px rgba(1,138,190,.42)!important}
+.card:focus-visible{border-color:#018abe!important;
+  box-shadow:inset 0 0 0 2px #018abe,0 0 0 3px rgba(1,138,190,.18)!important}
+
+/* A BLUE RAIL DOWN THE START OF THE BOX.
+   Drawn as an INSET SHADOW, not a border-left: a 3px border would widen the
+   box and shift every child 2px, so the panel would sit out of line with the
+   cards beneath it. An inset shadow paints inside the existing box and follows
+   the 26px corner radius, which is what makes it curve with the panel instead
+   of cutting across it. */
+.panel{box-shadow:inset 3px 0 0 0 #018abe,
+       0 1px 2px rgba(0,27,72,.04),0 18px 50px -12px rgba(0,27,72,.13)!important}
+.col-l section,.col-r section{box-shadow:inset 3px 0 0 0 #018abe,
+       0 1px 2px rgba(0,27,72,.04),0 10px 28px -14px rgba(0,27,72,.12)!important}
+
+/* ------------------------ THE PORTAL BAR, LARGER -------------------------
+   Scaled as a SET, not one value at a time: the bar's height, the mark, the
+   product name, its sub-line, the rule between them and the meta on the right
+   all move together, or the proportions that make it read as a lockup come
+   apart. Roughly +30% on the type and +20px of height.
+
+   The breakpoints below it move with it too. A taller bar with larger type
+   runs out of room SOONER, so the widths at which the meta, the sub-line and
+   the pill give way are raised to match -- otherwise making it bigger simply
+   reintroduces the 83px overflow that those rules were added to fix. */
+/* One line now, not two: 88px was sized for a name above a sub-line. */
+.top-in{height:76px!important}
+.brand{gap:16px!important}
+.brand-mark{height:23px!important}
+.brand-rule{height:36px!important}
+.brand b{font-size:20px!important;letter-spacing:-.3px!important;line-height:1}
+.brand span{font-size:12.5px!important;letter-spacing:.5px!important;margin-top:1px}
+.top-meta{font-size:14.5px!important;gap:11px!important}
+.pill{font-size:12.5px!important;padding:7px 15px!important}
+
+@media (max-width:900px){ .top-meta span:not(.pill){display:none} }
+/* The sub-line used to be dropped here; it is gone from the markup now, so
+   only the height rule is left. A rule pointing at something that no longer
+   exists is worse than no rule -- it reads as though the page still has one. */
+@media (max-width:680px){ .top-in{height:72px!important} }
+@media (max-width:520px){
+  .top-meta{display:none}
+  .brand b{font-size:17px!important}
+  .brand-mark{height:19px!important}
+}
+
+/* The pickers, larger — they are the two decisions the page exists to take,
+   and they were set smaller than the card titles beneath them. */
+/* Between the 14px they were and the 16.5px that overshot. The pill should
+   sit a step ABOVE the card titles under it -- these are the two decisions the
+   page exists to take -- without becoming the loudest thing on the screen. */
+.seg{padding:5px!important}
+.seg button{padding:11px 22px!important;font-size:15px!important;
+  letter-spacing:-.15px!important;gap:9px!important}
+.seg button small{font-size:12.5px!important;font-weight:600!important}
+.prow{gap:24px!important}
+.prow .step{min-width:158px!important}
+@media (max-width:720px){
+  .seg button{padding:10px 18px!important;font-size:14px!important}
+}

@@ -1,0 +1,33 @@
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Word lock + temp artefacts
+~$*
+*.tmp
+
+# Source material — shared offline, never published
+*.docx
+*.ttf
+*_Plan_Marking.png
+*_Typography_Spec.png
+
+# Python build artefacts
+__pycache__/
+*.pyc
+
+# Label templates supplied by the EMS — NEVER COMMIT.
+# These carry real device serials, MAC IDs, CHIP IDs, internal file paths,
+# printer ports and licence details. This repository publishes to GitHub Pages.
+*.btw
+*.lab
+templates/
+
+# Test artefacts. Job files carry a real order's addresses, PO numbers and
+# weights; the inspect dumps are probe output. Neither is part of the product.
+native-export/test-results/
+native-export/inspect-*.json

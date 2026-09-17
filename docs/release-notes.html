@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Release notes — Skyworth Label Generator</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="vendor/i18n.js"></script>
+<script src="vendor/version.js"></script>
+<style>
+:root{--ink:#16283f;--ink-2:#2e4459;--ink-3:#3a5068;--page:#f4f8fb;--surface:#fff;
+  --brand-700:#02457A;--brand-900:#001B48;--brand-b:#d6e0f2;--brand-l:#eff6ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);
+  font-family:'JioTypeLight',-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6}
+.wrap{width:100%;max-width:960px;margin:0 auto;padding:0 clamp(.9rem,3vw,2rem)}
+.top{background:linear-gradient(180deg,#eaf3fb,#dceaf6);border-bottom:1px solid var(--brand-b)}
+.h-in{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:66px;flex-wrap:wrap;padding:10px 0}
+.brand{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.brand-mark{height:20px;width:auto;color:var(--brand-900)}
+.brand-rule{width:1px;height:24px;background:var(--brand-b)}
+.h-title{margin:0;font-size:1.25rem;font-weight:700;color:var(--brand-900)}
+.h-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.h-tab{font-size:13px;color:var(--brand-700);text-decoration:none;padding:6px 12px;border-radius:7px;
+  border:1px solid transparent}
+.h-tab:hover{background:var(--brand-l);border-color:var(--brand-b)}
+main{padding:28px 0 56px}
+.lede{color:var(--ink-3);margin:0 0 26px;font-size:.95rem}
+.rel{background:var(--surface);border:1px solid var(--brand-b);border-radius:10px;
+  padding:18px 20px;margin-bottom:16px}
+.rel h2{margin:0 0 10px;font-size:1.05rem;color:var(--brand-900);display:flex;align-items:baseline;
+  gap:10px;flex-wrap:wrap}
+.rel-date{font-size:.8rem;font-weight:400;color:var(--ink-3)}
+.rel-now{font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  background:var(--brand-700);color:#fff;border-radius:999px;padding:2px 9px}
+.rel ul{margin:0;padding-left:1.15rem}
+.rel li{margin:.42rem 0;color:var(--ink-2)}
+footer{color:var(--ink-3);font-size:.82rem;padding:0 0 30px}
+@media (max-width:560px){.h-title{font-size:1.05rem}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap h-in">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 196 30" role="img" aria-label="SKYWORTH"><text x="0" y="23.5" textLength="140" lengthAdjust="spacingAndGlyphs" font-family="Arial Black, Arial Bold, Helvetica Neue, Segoe UI, system-ui, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.4" fill="currentColor">SKYWORTH</text><text x="150" y="24" textLength="46" lengthAdjust="spacingAndGlyphs" font-family="Microsoft YaHei, PingFang SC, Hiragino Sans GB, Noto Sans SC, Source Han Sans SC, SimHei, sans-serif" font-size="25" font-weight="700" fill="currentColor">创维</text></svg>
+    <span class="brand-rule" aria-hidden="true"></span>
+    <h1 class="h-title" id="rnTitle">Release notes</h1>
+  </div>
+  <!-- i18n.js mounts the language button into .h-nav -->
+  <nav class="h-nav" aria-label="Release notes"><a class="h-tab" id="rnBack" href="index.html">All builds</a></nav>
+</div></header>
+
+<main class="wrap">
+  <!-- version.js fills this from its own data, in the language currently set -->
+  <div id="releaseNotes"></div>
+</main>
+
+<footer class="wrap">
+  <div>All rights reserved, Copyright &copy; <span id="yr"></span></div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skyworth Label Generator</title>
+<style>
+/* ---------------------------------------------------------------------------
+   Palette. Built on the generators' own Jio blue (#16419c) so the portal and
+   the tools read as one product, deepened for the hero and lifted with a cyan
+   accent for interactive state.
+--------------------------------------------------------------------------- */
+:root{
+  --ink:#0b1220; --ink-2:#1e293b; --muted:#334155; --muted-2:#475569;
+  --brand:#1d4ed8; --brand-600:#2563eb; --brand-900:#1e3a8a; --brand-050:#eff6ff;
+  --accent:#0e7490; --accent-050:#e6fbff;
+  --ok:#047857; --warn:#b45309;
+  --page:#f7f9fd; --surface:#fff; --line:#e2e8f0; --line-2:#cbd5e1;
+  --r-l:20px; --r-m:14px; --r-s:10px;
+  --sh-s:0 1px 2px rgba(11,26,60,.06), 0 2px 8px rgba(11,26,60,.04);
+  --sh-m:0 4px 12px rgba(11,26,60,.07), 0 12px 32px rgba(11,26,60,.07);
+  --sh-l:0 12px 28px rgba(11,26,60,.10), 0 28px 64px rgba(11,26,60,.10);
+  --ff:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--ff);
+     -webkit-font-smoothing:antialiased;line-height:1.55}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1220px,calc(100% - 48px));margin-inline:auto}
+
+/* ------------------------------- Top bar -------------------------------- */
+/* NOT sticky. The portal is one screenful and its whole job is to get you into
+   a generator -- a bar that follows you down a page you barely scroll is chrome
+   with nothing to do. The GENERATOR pages are the opposite: a long form where
+   the bar carries the label you are editing and the switcher to the next one,
+   so there it does follow. Same look, different behaviour, because the two
+   pages are used differently.
+   Translucent either way -- that part is shared, and the wash runs unbroken
+   from the top of the page through it. */
+.top{position:relative;z-index:50;background:rgba(255,255,255,.82);
+     backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;justify-content:space-between;height:66px;gap:16px}
+.brand{display:flex;align-items:center;gap:13px;font-weight:700;letter-spacing:-.2px;flex:0 0 auto}
+/* Sized by HEIGHT with width:auto, so the mark's own aspect decides its width
+   and a font substitution cannot stretch it. currentColor, so it takes the
+   brand ink here and white on the dark page headers. */
+.brand-mark{height:17px;width:auto;flex:none;color:var(--brand-900,#001b48);display:block}
+.brand-rule{width:1px;height:26px;flex:none;background:var(--line-2,#97cadb)}
+/* The footer sits on the dark band, so its copy of the lockup takes white
+   rather than the brand ink. */
+.f-mark{color:#fff;height:16px;opacity:.95}
+.f-rule{background:rgba(255,255,255,.32);height:24px}
+.brand .mk{width:32px;height:32px;border-radius:9px;flex:none;display:grid;place-items:center;
+     background:linear-gradient(140deg,var(--brand-600),var(--brand-900));box-shadow:var(--sh-s)}
+.brand .mk svg{width:18px;height:18px}
+.brand b{font-size:15.5px}
+.brand span{display:block;font-size:11.5px;font-weight:600;color:var(--muted-2);letter-spacing:.4px;text-transform:uppercase}
+.top-meta{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.pill{border:1px solid var(--line-2);border-radius:999px;padding:5px 12px;font-weight:600;
+      font-size:11.5px;color:var(--brand);background:var(--brand-050)}
+
+/* --------------------------------- Hero --------------------------------- */
+.hero{position:relative;overflow:hidden;color:#fff;
+      background:radial-gradient(1100px 520px at 12% -10%,#2563eb 0%,transparent 58%),
+                 radial-gradient(900px 460px at 88% 0%,#0891b2 0%,transparent 55%),
+                 linear-gradient(160deg,#0b2a6b 0%,#0a1740 62%,#080f28 100%)}
+.hero:after{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+      background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+                       linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+      background-size:56px 56px;
+      mask-image:radial-gradient(760px 400px at 50% 12%,#000 0%,transparent 78%)}
+.hero-in{position:relative;z-index:1;padding:46px 0 58px;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:600;
+      letter-spacing:1.4px;text-transform:uppercase;color:#dbeafe;
+      border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.06);
+      padding:7px 15px;border-radius:999px;margin-bottom:22px}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--accent);
+      box-shadow:0 0 0 4px rgba(6,182,212,.22);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{margin:0;font-size:clamp(38px,6.6vw,72px);line-height:1.02;letter-spacing:-2.2px;font-weight:850}
+h1 .grad{background:linear-gradient(96deg,#fff 12%,#9fd7ff 52%,#67e8f9 92%);
+      -webkit-background-clip:text;background-clip:text;color:transparent}
+.stats{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-top:40px}
+.stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+      border-radius:var(--r-m);padding:13px 20px;min-width:118px;backdrop-filter:blur(6px)}
+.stat b{display:block;font-size:21px;letter-spacing:-.5px}
+.stat span{font-size:12px;color:#e0ebff;letter-spacing:.5px;text-transform:uppercase;font-weight:600}
+
+/* ------------------------------ Selector -------------------------------- */
+main{padding:0 0 60px}
+.panel{margin-top:-46px;position:relative;z-index:2;background:var(--surface);
+       border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh-l);padding:26px 26px 30px}
+.step{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.step i{width:23px;height:23px;border-radius:7px;background:var(--brand-050);color:var(--brand);
+       display:grid;place-items:center;font-size:11.5px;font-weight:800;font-style:normal;flex:none}
+.step h2{margin:0;font-size:13.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--muted)}
+.seg{display:flex;gap:8px;flex-wrap:wrap;background:var(--page);border:1px solid var(--line);
+     border-radius:var(--r-m);padding:6px;width:max-content;max-width:100%}
+.seg button{appearance:none;border:0;background:transparent;font:inherit;cursor:pointer;
+     padding:10px 22px;border-radius:10px;font-weight:650;font-size:14px;color:var(--ink-2);
+     transition:.18s ease;display:flex;align-items:center;gap:9px;white-space:nowrap}
+.seg button small{font-weight:600;font-size:11.5px;color:var(--muted)}
+.seg button:hover{background:#fff;color:var(--brand)}
+.seg button[aria-selected="true"]{background:linear-gradient(140deg,var(--brand-600),var(--brand-900));
+     color:#fff;box-shadow:var(--sh-s)}
+.seg button[aria-selected="true"] small{color:#dbeafe}
+.divider{height:1px;background:var(--line);margin:26px 0}
+
+/* -------------------------------- Cards --------------------------------- */
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.card{position:relative;display:flex;flex-direction:column;background:var(--surface);
+      border:1px solid var(--line);border-radius:var(--r-m);padding:22px;box-shadow:var(--sh-s);
+      transition:transform .22s cubic-bezier(.2,.7,.3,1), box-shadow .22s, border-color .22s;
+      animation:rise .42s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.card:hover{transform:translateY(-4px);box-shadow:var(--sh-m);border-color:var(--line-2)}
+.card:focus-visible{outline:3px solid var(--brand-600);outline-offset:3px}
+.card .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin-bottom:15px;
+      background:linear-gradient(140deg,var(--brand-050),#fff);border:1px solid var(--line);color:var(--brand)}
+.card .ic svg{width:22px;height:22px}
+.card h3{margin:0 0 5px;font-size:17px;letter-spacing:-.35px}
+.card .dim{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:15px 0 18px}
+.chip{font-size:11.5px;font-weight:650;padding:4.5px 10px;border-radius:999px;
+      border:1px solid var(--line-2);color:var(--muted);background:var(--page);display:flex;align-items:center;gap:5px}
+.chip.on{color:var(--brand);background:var(--brand-050);border-color:#c9d8f5}
+.chip.ac{color:#0e7490;background:var(--accent-050);border-color:#a5eef7}
+.chip i{width:5px;height:5px;border-radius:50%;background:currentColor;flex:none}
+.go{margin-top:auto;display:flex;align-items:center;justify-content:space-between;
+    font-weight:700;font-size:13.5px;color:var(--brand);padding-top:15px;border-top:1px solid var(--line)}
+.go svg{width:17px;height:17px;transition:transform .22s}
+.card:hover .go svg{transform:translateX(4px)}
+.card:after{content:"";position:absolute;inset:0;border-radius:var(--r-m);pointer-events:none;
+    background:linear-gradient(140deg,rgba(26,79,214,.05),transparent 42%);opacity:0;transition:.22s}
+.card:hover:after{opacity:1}
+
+/* ----------------------------- Empty state ------------------------------ */
+.empty{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center;
+       background:linear-gradient(150deg,#f8fbff,#eef4ff);border:1px solid var(--line);
+       border-radius:var(--r-l);padding:38px 40px;animation:rise .45s cubic-bezier(.2,.7,.3,1) both}
+.empty .tag{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;
+       letter-spacing:1px;text-transform:uppercase;color:var(--warn);
+       background:#fdf6e3;border:1px solid #f0e2b6;border-radius:999px;padding:6px 13px}
+.empty h3{margin:16px 0 10px;font-size:26px;letter-spacing:-.7px}
+.empty p{margin:0 0 8px;color:var(--t3,#334155);font-size:15px;max-width:46ch}
+.empty ul{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.empty li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink-2)}
+.empty li svg{width:17px;height:17px;color:var(--brand);flex:none;margin-top:1px}
+.art{display:grid;place-items:center}
+.art svg{width:100%;max-width:330px;height:auto}
+/* gentle idle motion on the illustration */
+.f-slow{animation:float 5.2s ease-in-out infinite}
+.f-mid{animation:float 4.2s ease-in-out infinite .35s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.blob{animation:morph 9s ease-in-out infinite;transform-origin:center}
+@keyframes morph{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.045) rotate(-2.5deg)}}
+.dash{stroke-dasharray:5 6;animation:march 3.4s linear infinite}
+@keyframes march{to{stroke-dashoffset:-44}}
+.spark{animation:twinkle 2.6s ease-in-out infinite}
+.spark:nth-of-type(2){animation-delay:.7s}
+.spark:nth-of-type(3){animation-delay:1.4s}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
+
+/* -------------------------------- Footer -------------------------------- */
+footer{background:linear-gradient(160deg,#1e3a8a,#0b1228);color:#dbe6fb;padding:40px 0 34px;margin-top:24px}
+.f-in{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.f-brand{display:flex;align-items:center;gap:11px;color:#fff}
+.f-brand .mk{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+      background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16)}
+.f-brand .mk svg{width:16px;height:16px}
+.f-brand b{font-size:14.5px;letter-spacing:-.2px}
+.f-copy{font-size:13.5px;text-align:right}
+.f-copy b{color:#fff;font-weight:650}
+.f-note{margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16);
+      font-size:12.5px;color:#b9cbea;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .empty{grid-template-columns:1fr;padding:30px 26px}
+  .art{order:-1}
+  .hero-in{padding:40px 0 50px}
+  .panel{padding:20px 18px 24px}
+  .wrap{width:calc(100% - 32px)}
+  .f-copy{text-align:left}
+}
+/* WHAT GIVES WAY, IN ORDER. The top bar ran 43px past the viewport at 430 and
+   83px at 390: the brand and .top-meta both want their full width and neither
+   was yielding. Measured, not guessed - .top-meta was the element crossing the
+   edge. Decoration goes first and the task last:
+     640px  the print-spec line ("600 / 300 DPI") - true, but not why anyone
+            is here, and the label cards each repeat their own DPI anyway
+     520px  the product sub-line under the name
+     430px  the "N generators" pill; the hero states the same number larger
+   The corporate mark and the product name are kept at every width - between
+   them they say what this page IS. */
+@media (max-width:640px){ .top-meta span:not(.pill){display:none} }
+@media (max-width:520px){ .brand div span{display:none} }
+@media (max-width:430px){ .top-meta{display:none} .brand b{font-size:14.5px} }
+/* The product name gained its English term, and at phone width the brand
+   lockup is `flex:0 0 auto` -- it cannot shrink, so instead of wrapping it
+   pushed the language button 103px off the page. Let it give way and wrap;
+   the button is the thing that must stay reachable. */
+@media (max-width:560px){ .brand{flex:0 1 auto;min-width:0}
+  .brand b{white-space:normal;line-height:1.2} }
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+                     transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+
+
+/* ---------------------------------------------------------------------------
+   Hover and selection feedback. Transform-only, so it stays on the compositor
+   with no layout or paint.
+
+   THIS BLOCK USED TO "POP", and it was reported as bouncing. Three separate
+   things were doing it, all at once and all with !important, which is also why
+   calming it from the palette sheet had no effect:
+
+     the curves OVERSHOT      cubic-bezier(.2,.9,.25,1.35) and (.2,.9,.25,1.4)
+                              end past 1, so every transition sprang past its
+                              target and came back. That is a bounce by
+                              construction, not a side effect.
+     the distances were large a card lifted 7px AND scaled 1.022; a pill lifted
+                              3px and grew 1.05
+     things moved that need not  the card icon scaled 1.08 and rotated -3 degrees
+
+   Feedback only has to say "this is the one under your pointer". A small lift
+   says it. The curves are plain ease-out now -- nothing ends above 1, so
+   nothing can overshoot -- distances are roughly a fifth of what they were, and
+   the icon no longer moves at all.
+--------------------------------------------------------------------------- */
+.seg button, .card{will-change:transform}
+.seg button{transition:transform .15s ease-out,
+                       background-color .15s linear, color .15s linear,
+                       box-shadow .15s linear !important}
+.seg button:hover{transform:translateY(-1px);
+  box-shadow:0 4px 10px rgba(0,27,72,.12) !important; z-index:1}
+.seg button:active{transform:translateY(0)}
+.seg button[aria-selected="true"]:hover{transform:translateY(-1px);
+  box-shadow:0 6px 16px -4px rgba(1,138,190,.42) !important}
+
+.card{transition:transform .16s ease-out,
+                 box-shadow .16s linear, border-color .16s linear !important}
+.card:hover{transform:translateY(-2px) !important;
+  box-shadow:0 6px 14px rgba(0,27,72,.08), 0 16px 34px -10px rgba(0,27,72,.14) !important;
+  z-index:2}
+.card:active{transform:translateY(-1px) !important}
+.card .ic{transition:none}
+
+/* keyboard users get the same affordance */
+.seg button:focus-visible{transform:translateY(-1px);
+  outline:3px solid #018abe; outline-offset:3px}
+.card:focus-visible{transform:translateY(-2px) !important}
+@media (prefers-reduced-motion:reduce){
+  .seg button:hover,.card:hover,.card:focus-visible,
+  .seg button:focus-visible{transform:none !important}
+}
+</style>
+<meta name="theme-color" content="#001b48">
+<link rel="stylesheet" href="assets/palette.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body class="portal">
+
+<div class="top"><div class="wrap top-in">
+  <div class="brand">
+    <!-- The corporate mark, then a hairline, then the product. The order is the
+         relationship: Skyworth makes this, and the thing you are looking at is
+         the Label Generator. The product name drops its "Skyworth" because the
+         mark beside it already says so - it read "SKYWORTH 创维 | Skyworth Label
+         Generator" otherwise. -->
+    <svg class="brand-mark" viewBox="0 0 196 30" role="img" aria-label="SKYWORTH 创维" preserveAspectRatio="xMinYMid meet"><text x="0" y="23.5" textLength="140" lengthAdjust="spacingAndGlyphs" font-family="Arial Black, Arial Bold, Helvetica Neue, Segoe UI, system-ui, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.4" fill="currentColor">SKYWORTH</text><text x="150" y="24" textLength="46" lengthAdjust="spacingAndGlyphs" font-family="Microsoft YaHei, PingFang SC, Hiragino Sans GB, Noto Sans SC, Source Han Sans SC, SimHei, sans-serif" font-size="25" font-weight="700" fill="currentColor">创维</text></svg>
+    <span class="brand-rule" aria-hidden="true"></span>
+    <div><b>Label Generator</b></div>
+  </div>
+  <div class="top-meta"><span class="pill" id="genCount">generators</span><span>600 / 300 DPI · borderless</span></div>
+</div></div>
+
+<header class="hero"><div class="wrap hero-in">
+  <div class="eyebrow"><i></i> Offline · print-ready · layout locked</div>
+  <h1>Skyworth <span class="grad">Label Generator</span></h1>
+  <!-- COUNTED, not written out. This read "15 Generators" directly above a
+       header pill reading "20 generators" - two numbers contradicting each
+       other on one screen, because both were typed and only one was updated.
+       Plants and label types come from the same catalogue for the same reason. -->
+  <div class="stats">
+    <div class="stat"><b id="statGen">—</b><span>Generators</span></div>
+    <div class="stat"><b id="statLabels">—</b><span>Label types</span></div>
+    <div class="stat"><b id="statPlants">—</b><span>Plants</span></div>
+    <div class="stat"><b id="statVendors">—</b><span>EMS partners</span></div>
+  </div>
+</div></header>
+
+<main><div class="wrap">
+  <!-- All THREE steps live in the one panel. Steps 1 and 2 were inside it and
+       step 3 was loose on the page below, so the numbered sequence broke in
+       half exactly where the user is meant to carry on reading, and the last
+       step - the one that actually opens a generator - looked like separate
+       content rather than the end of the flow. -->
+  <section class="panel">
+    <!-- Label BESIDE the control, not above it, the way the Validator sets
+         PLANT and VENDOR. Stacked, each of these steps spent 105px on a 23px
+         label and a 56px control; side by side they cost one control's height
+         and read as one decision rather than two things to scan. -->
+    <div class="prow">
+      <div class="step"><i>1</i><h2>Select plant</h2></div>
+      <div class="seg" role="tablist" id="plantSeg"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="prow">
+      <div class="step"><i>2</i><h2>Select vendor</h2></div>
+      <div class="seg" role="tablist" id="vendorSeg"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="step"><i>3</i><h2 id="pickHead">Choose a label</h2></div>
+    <div id="out"></div>
+  </section>
+</div></main>
+
+<footer><div class="wrap">
+  <div class="f-in">
+    <!-- The same lockup as the top bar. It carried the old document glyph and
+         then repeated "Skyworth" in the name beside it. -->
+    <div class="f-brand">
+      <svg class="brand-mark f-mark" viewBox="0 0 196 30" role="img" aria-label="SKYWORTH 创维" preserveAspectRatio="xMinYMid meet"><text x="0" y="23.5" textLength="140" lengthAdjust="spacingAndGlyphs" font-family="Arial Black, Arial Bold, Helvetica Neue, Segoe UI, system-ui, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.4" fill="currentColor">SKYWORTH</text><text x="150" y="24" textLength="46" lengthAdjust="spacingAndGlyphs" font-family="Microsoft YaHei, PingFang SC, Hiragino Sans GB, Noto Sans SC, Source Han Sans SC, SimHei, sans-serif" font-size="25" font-weight="700" fill="currentColor">创维</text></svg>
+      <span class="brand-rule f-rule" aria-hidden="true"></span>
+      <b>Label Generator</b>
+    </div>
+    <div class="f-copy">
+      <div>All rights reserved, Copyright &copy; <span id="yr"></span></div>
+      <div><b>Skyworth Label Generator, Rahul Kumbhar</b></div>
+    </div>
+  </div>
+  <div class="f-note">
+    <span>Compliance &amp; regulatory artwork — layouts are locked to the approved plans; only data is editable.</span>
+    <span>Runs fully offline. No network required.</span>
+  </div>
+</div></footer>
+
+<script>
+/* ------------------------------- Hardening --------------------------------
+   Three sinks are given explicit encoders rather than trusting the input
+   guards upstream:
+     xmlEsc  - values interpolated into the QR payload. Without it a Commodity
+               or Model containing < > & emits malformed XML, so a scanner
+               mis-parses the code. A no-op byte-for-byte on clean values.
+     htmlEsc - values that reach innerHTML (the blocked-fields panel). Two
+               validation messages quote a field value back to the operator;
+               if either field ever loses its keystroke guard that becomes XSS.
+     safeName- download filenames, which are built from field values.
+--------------------------------------------------------------------------- */
+function xmlEsc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+function htmlEsc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function safeName(v) {
+  return String(v == null ? '' : v).replace(/[^A-Za-z0-9._-]/g, '_').replace(/_{2,}/g, '_').slice(0, 120);
+}
+
+/* ---------------------------------------------------------------------------
+   Catalogue. Paths are relative to this file, which sits in
+   D:\Others\Label\Skyworth Label Generator\, so every generator is one
+   directory up. Verified against the tree on 2026-08-13.
+--------------------------------------------------------------------------- */
+var P = "";
+var LABELS = {
+  device : {n:"Device Label",        d:"45.60 × 29.60 mm",  dpi:"600 DPI", qr:1, bc:"Code128", ic:"chip"},
+  rsn    : {n:"RSN Label",           d:"35.00 × 56.00 mm",  dpi:"600 DPI", qr:1, bc:"Code128", ic:"tag"},
+  mrp    : {n:"MRP Label",           d:"130.00 × 56.00 mm", dpi:"600 DPI", qr:0, bc:"",        ic:"doc"},
+  carton : {n:"Master Carton Label", d:"110.00 × 100.00 mm",dpi:"300 DPI", qr:1, bc:"Code128", ic:"box"},
+  pallet : {n:"Pallet Label",        d:"110.00 × 100.00 mm",dpi:"600 DPI", qr:1, bc:"Code128", ic:"stack"}
+};
+var CAT = {
+  "AF1|VVDN":{device:"af1/vvdn/device/index.html", rsn:"af1/vvdn/rsn/index.html",
+    mrp:"af1/vvdn/mrp/index.html", carton:"af1/vvdn/carton/index.html", pallet:"af1/vvdn/pallet/index.html"},
+  "AF1|SGS":{device:"af1/sgs/device/index.html", rsn:"af1/sgs/rsn/index.html",
+    mrp:"af1/sgs/mrp/index.html", carton:"af1/sgs/carton/index.html", pallet:"af1/sgs/pallet/index.html"},
+  "AF1|SKY":{device:"af1/sky/device/index.html", rsn:"af1/sky/rsn/index.html",
+    mrp:"af1/sky/mrp/index.html", carton:"af1/sky/carton/index.html", pallet:"af1/sky/pallet/index.html"},
+  "JF|VVDN":{device:"jf/vvdn/device/index.html", rsn:"jf/vvdn/rsn/index.html",
+    mrp:"jf/vvdn/mrp/index.html", carton:"jf/vvdn/carton/index.html", pallet:"jf/vvdn/pallet/index.html"},
+  "JF|SGS":{device:"jf/sgs/device/index.html", rsn:"jf/sgs/rsn/index.html",
+    mrp:"jf/sgs/mrp/index.html", carton:"jf/sgs/carton/index.html", pallet:"jf/sgs/pallet/index.html"},
+  "JF|SKY":{device:"jf/sky/device/index.html", rsn:"jf/sky/rsn/index.html",
+    mrp:"jf/sky/mrp/index.html", carton:"jf/sky/carton/index.html", pallet:"jf/sky/pallet/index.html"}
+};
+var PLANTS  = [["AF1","Air Fiber"],["JF","Jio Fiber"]];
+/* The display name, not the legal one: the pill is a choice, not a letterhead,
+   and "VVDN Technologies Private Limited" is what the LABEL prints, which the
+   MRP and pallet templates already carry. */
+var VENDORS = [["VVDN","VVDN"],["SGS","Syrma SGS"],["SKY","Skyquad"]];
+
+var ICONS = {
+  chip:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>',
+  tag:'<path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h9l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+  box:'<path d="M21 8 12 3 3 8v8l9 5 9-5Z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+  stack:'<path d="M12 2 2 7l10 5 10-5Z"/><path d="M2 12l10 5 10-5M2 17l10 5 10-5"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>'
+};
+function svg(p, w){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(w||1.8)+
+  '" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>'; }
+
+/* THE PORTAL REMEMBERS THE BUILD. Coming back from a generator reset this to
+   AF1/VVDN, so a Syrma operator re-picked plant and vendor every single time -
+   and the reset was silent, which is worse: the labels below simply belonged to
+   a different build than the one they had been working in.
+   Wrapped, because localStorage THROWS rather than returning null in a browser
+   set to block site data, and the whole portal would fail to paint. A forgotten
+   choice is a small annoyance; a blank page is not. */
+var DEFAULT_BUILD = { plant:"AF1", vendor:"VVDN" };
+var state = (function(){
+  try {
+    var raw = localStorage.getItem("slg.build");
+    if (raw){
+      var v = JSON.parse(raw);
+      /* Validated against the catalogue, never trusted as stored: a build that
+         has since been renamed or withdrawn would otherwise leave the portal
+         pointing at nothing. */
+      if (v && CAT[v.plant + "|" + v.vendor]) return { plant:v.plant, vendor:v.vendor };
+    }
+  } catch (e) {}
+  return { plant:DEFAULT_BUILD.plant, vendor:DEFAULT_BUILD.vendor };
+})();
+function rememberBuild(){
+  try { localStorage.setItem("slg.build", JSON.stringify(state)); } catch (e) {}
+}
+var $ = function(id){ return document.getElementById(id); };
+
+/* THE VENDOR CHIP SHOWS THE NAME ALONE; THE PLANT KEEPS ITS CODE.
+   "AF1" and "JF" are printed on the artwork, so for a plant the code is the
+   half a reader actually wants and the name explains it. A vendor's short key
+   is internal -- "SGS  Syrma SGS" says the same thing twice and reads as a
+   spec line rather than a choice. `nameOnly` is the single switch, and data-v
+   carries the KEY either way, because that is what CAT and BUILD are keyed by
+   and what every probe drives. */
+function seg(el, items, key, nameOnly){
+  el.innerHTML = items.map(function(it){
+    var label = nameOnly ? it[1] : it[0]+' <small>'+it[1]+'</small>';
+    return '<button role="tab" data-v="'+it[0]+'" aria-selected="'+(state[key]===it[0])+'">'+
+           label+'</button>';
+  }).join("");
+  Array.prototype.forEach.call(el.querySelectorAll("button"), function(b){
+    b.onclick = function(){ state[key] = b.dataset.v; rememberBuild(); paint(); };
+  });
+}
+
+/* Illustration for the not-yet-built combination: a line-art courier holding a
+   carton, drawn inline so the page stays fully offline like the generators. */
+function artwork(){ return ''+
+'<svg viewBox="0 0 340 320" role="img" aria-label="Illustration: a courier holding a carton">'+
+' <ellipse class="blob" cx="176" cy="168" rx="118" ry="126" fill="#e8f2ff"/>'+
+' <circle class="spark" cx="60"  cy="72"  r="4.5" fill="#67e8f9"/>'+
+' <circle class="spark" cx="292" cy="108" r="5.5" fill="#93c5fd"/>'+
+' <circle class="spark" cx="272" cy="242" r="4"   fill="#67e8f9"/>'+
+' <g class="f-slow" fill="none" stroke="#1e3a5f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">'+
+'  <path d="M150 300h44M158 300c-2-26 1-52 4-74M186 300c3-26 5-52 3-74" fill="#fff"/>'+
+'  <path d="M142 296c6 6 20 8 30 4v-8h-30Z" fill="#fff"/>'+
+'  <path d="M180 296c6 6 20 8 30 4v-8h-30Z" fill="#fff"/>'+
+'  <path d="M152 152c-6 26-8 52-6 74h48c3-24 3-50-1-74Z" fill="#fff"/>'+
+'  <path d="M196 108c14 4 22 16 22 32 0 14-3 26-8 34" fill="#bfe3fb"/>'+
+'  <path d="M152 152c-4-22 2-38 16-44" fill="#bfe3fb"/>'+
+'  <path d="M168 108c8-4 20-4 28 0 8 4 12 14 12 26 0 10-2 18-6 22h-46c-3-8-4-18-2-28 2-10 6-17 14-20Z" fill="#bfe3fb"/>'+
+'  <path d="M170 74c0-11 8-19 19-19s19 8 19 19c0 13-8 22-19 22s-19-9-19-22Z" fill="#fff"/>'+
+'  <path d="M206 66c8 2 13 9 13 19 0 14-5 26-13 32" fill="#7cc4f2"/>'+
+'  <path d="M168 62c4-10 14-16 25-15 12 1 19 8 20 17-8-3-18-4-27-2-8 2-14 5-18 9Z" fill="#3b82f6"/>'+
+'  <path d="M176 84c2 2 5 2 7 0M192 84c2 2 5 2 7 0"/>'+
+' </g>'+
+' <g class="f-mid">'+
+'  <path d="M78 150h96v70H78Z" fill="#93b8dd" stroke="#1e3a5f" stroke-width="2.6" stroke-linejoin="round"/>'+
+'  <path d="M78 150l14-16h96l-14 16Z" fill="#b7d3ee" stroke="#1e3a5f" stroke-width="2.6" stroke-linejoin="round"/>'+
+'  <path d="M174 150l14-16v70l-14 16Z" fill="#7aa4cd" stroke="#1e3a5f" stroke-width="2.6" stroke-linejoin="round"/>'+
+'  <path d="M126 134v86" stroke="#1e3a5f" stroke-width="2.2" opacity=".55"/>'+
+'  <rect x="92" y="166" width="9" height="26" rx="3" fill="#fff" stroke="#1e3a5f" stroke-width="2.2"/>'+
+' </g>'+
+' <path class="dash" d="M40 250c40 22 92 30 150 22" fill="none" stroke="#7cc4f2" stroke-width="2.6" stroke-linecap="round"/>'+
+'</svg>'; }
+
+function card(key, href){
+  var L = LABELS[key];
+  var chips = '<span class="chip'+(L.qr?" on":"")+'"><i></i>'+(L.qr?"QR preview":"No QR")+'</span>'+
+    (L.bc ? '<span class="chip ac"><i></i>'+L.bc+' preview</span>' : '<span class="chip"><i></i>No barcode</span>')+
+    '<span class="chip"><i></i>'+L.dpi+'</span>';
+  return '<a class="card" href="'+href+'">'+
+    '<span class="ic">'+svg(ICONS[L.ic])+'</span>'+
+    '<h3>'+L.n+'</h3><div class="dim">'+L.d+' · borderless</div>'+
+    '<div class="chips">'+chips+'</div>'+
+    '<span class="go">Open generator '+svg(ICONS.arrow,2)+'</span></a>';
+}
+
+/* Counted from CAT, never written out. The header said "15 generators"
+   while twenty existed, because a number in static copy has to be remembered
+   and a derived one cannot be forgotten. */
+function generatorCount(){
+  var n = 0;
+  for (var k in CAT) if (CAT[k]) for (var l in CAT[k]) n++;
+  return n;
+}
+
+/* Every number on the page comes from CAT, so none of them can go stale
+   independently of the others. */
+function paintCounts(){
+  var builds = 0, labels = {};
+  for (var k in CAT) if (CAT[k]){ builds++; for (var l in CAT[k]) labels[l] = 1; }
+  var set = [
+    ["genCount",    generatorCount() + " generators"],
+    ["statGen",     generatorCount()],
+    ["statLabels",  Object.keys(labels).length],
+    ["statPlants",  PLANTS.length],
+    ["statVendors", VENDORS.length]
+  ];
+  for (var i = 0; i < set.length; i++){
+    var el = $(set[i][0]);
+    if (el) el.textContent = set[i][1];
+  }
+}
+
+function paint(){
+  paintCounts();
+  seg($("plantSeg"),  PLANTS,  "plant");
+  seg($("vendorSeg"), VENDORS, "vendor", true);
+  var key = state.plant+"|"+state.vendor;
+  var set = CAT[key];
+  var head = $("pickHead");
+  var out  = $("out");
+
+  /* All four plant x vendor combinations are built today, so this branch is a
+     GUARD rather than a state the user can reach. It was Syrma-specific copy
+     saying Jio Fiber was "still on the way"; once those generators existed that
+     text could only ever have been wrong, and copy describing the UI has to
+     change with the UI. Worded from the selection instead, so it stays true for
+     whichever combination is missing next. */
+  if (!set){
+    var who = state.vendor + " · " + state.plant;
+    head.textContent = who + " — not available yet";
+    out.innerHTML =
+      '<div class="empty">'+
+        '<div>'+
+          '<span class="tag">Not implemented yet</span>'+
+          '<h3>No generators are published for '+who+'</h3>'+
+          '<p>Once that artwork is issued, all five labels appear here with the same locked '+
+          'layouts and machine read-back as every other build.</p>'+
+          '<ul>'+
+            '<li>'+svg(ICONS.check)+'<span>Device, MRP, Pallet, RSN and Master Carton — five generators</span></li>'+
+            '<li>'+svg(ICONS.check)+'<span>QR payload and barcode previews, exactly as the other builds have</span></li>'+
+            '<li>'+svg(ICONS.check)+'<span>Pick another plant or vendor above to carry on meanwhile</span></li>'+
+          '</ul>'+
+        '</div>'+
+        '<div class="art">'+artwork()+'</div>'+
+      '</div>';
+    return;
+  }
+  head.textContent = "Choose a label — " + state.vendor + " · " + state.plant;
+  var order = ["device","rsn","mrp","carton","pallet"];
+  out.innerHTML = '<div class="grid">' +
+    order.map(function(k, i){
+      return card(k, encodeURI(P + set[k])).replace('class="card"',
+             /* 55ms per card meant the fifth waited 220ms, so the grid
+                CASCADED every time a plant or vendor was clicked -- paint()
+                rebuilds #out, so the entrance replays on every selection, not
+                just on load. 14ms keeps a trace of sequence without the wave. */
+             'class="card" style="animation-delay:'+(i*14)+'ms"');
+    }).join("") + '</div>';
+}
+
+$("yr").textContent = new Date().getFullYear();
+paint();
+</script>
+<script src="vendor/i18n.js"></script>
+<script src="vendor/version.js"></script>
+</body>
+</html>
