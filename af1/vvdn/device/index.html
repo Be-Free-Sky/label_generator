@@ -785,17 +785,13 @@ function drawOnto(cv, scale) {
   row('MAC ID:', f.mac, 1.95, 11.19);
   row('RSN:', f.rsn || '—', 1.95, 13.05);
   row('CHIP ID:', f.chip, 1.95, 20.94, 21.9, true); // end before WEEE logo; tight kerning matches reference
-  // 7 AF1 badge 3.9x2.5mm at (22.2, 9.8), fixed position (SGS reference)
-  //   Was 4x3mm at (20.96, 10.00) with a 0.26 mm stroke -- larger, heavier and
-  //   1.24 mm further left than the badge on every other AF1 build, which all
-  //   take 3.9x2.5 from the reference sheet. One plant mark, three builds, so it
-  //   has to be drawn the same way on all of them.
+  // 7 AF1 badge 4x3mm at (20.96, 10.00)
   {
-    const x = mm(22.2), y = mm(9.8), w = mm(3.9), h = mm(2.5), r = mm(0.5);
+    const x = mm(20.96), y = mm(10.0), w = mm(4), h = mm(3), r = mm(0.75);
     ctx.beginPath(); ctx.moveTo(x+r,y);
     ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
     ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
-    ctx.lineWidth = mm(0.13); ctx.strokeStyle = '#000'; ctx.stroke();
+    ctx.lineWidth = mm(0.26); ctx.strokeStyle = '#000'; ctx.stroke();
     ctx.font = pt(5).toFixed(1)+'px JioTypeMedium'; ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText(f.plant, x+w/2, y+h/2+mm(0.1));
     ctx.textAlign='left'; ctx.textBaseline='alphabetic';
