@@ -466,6 +466,24 @@ div:has(> textarea.bad) > label, div:has(> input.bad) > label{color:#b91c1c !imp
 #dlErr:before{top:50% !important; transform:translateY(-50%); margin-top:0 !important}
 #dlErr{padding-left:46px !important; display:flex !important; align-items:center !important;
        min-height:44px !important}
+/* The label tabs sit on their OWN ROW, left-aligned under the title, at every
+   width -- not floated to the far right of the brand.
+   The header is a flex row of two children: the brand lockup, and an unclassed
+   wrapper holding the nav. Giving that wrapper a full-width basis pushes it
+   onto the next line, and flex-start puts it under the title rather than out to
+   the right. Below about 1200px it already wrapped this way; this simply makes
+   the wide layout agree with the narrow one instead of having two of them. */
+header{flex-wrap:wrap}
+/* Two header shapes exist. On the device, RSN, carton and pallet pages the
+   nav is a DIRECT child of <header>; on the MRP pages it sits inside an
+   unclassed wrapper. Selecting only the wrapper fixed the MRP pages and
+   left the other twenty-four exactly as they were, so both are named. */
+header > .h-nav,
+header > div:not(.h-lock){flex:0 0 100%;justify-content:flex-start;margin-left:0}
+/* margin-left:auto is what pushed the nav to the right, and an auto margin
+   beats justify-content in a flex row -- so it has to be cleared, not
+   out-voted. */
+header > div:not(.h-lock) > .h-nav{justify-content:flex-start;margin-left:0}
 </style>
 <meta name="theme-color" content="#001b48">
 <link rel="stylesheet" href="../../../assets/palette.css">
